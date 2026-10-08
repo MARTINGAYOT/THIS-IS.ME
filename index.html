@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Martin Gayot — Claim File MG-2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-900:#0b2e2e;
+    --teal-800:#0f3d3a;
+    --teal-700:#145c52;
+    --teal-600:#1a7a68;
+    --teal-500:#1f9e82;
+    --green-500:#2fae6a;
+    --green-100:#e3f6ea;
+    --amber-500:#e8a23d;
+    --paper:#fbfaf6;
+    --paper-dim:#f3f1e9;
+    --ink:#14201e;
+    --ink-soft:#4b5a57;
+    --line:#d8dcd3;
+    --white:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  body{padding-bottom:60px;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+
+  /* ===== top status bar ===== */
+  .statusbar{
+    background:var(--teal-900);
+    color:#cfe9df;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.06em;
+    padding:8px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    border-bottom:2px solid var(--green-500);
+  }
+  .statusbar .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green-500);margin-right:7px;box-shadow:0 0 0 3px rgba(47,174,106,.25);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+  /* ===== header / claim ticket ===== */
+  .ticket-wrap{max-width:900px;margin:34px auto 0;padding:0 20px;}
+  .ticket{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(20,32,30,.04), 0 10px 30px rgba(20,32,30,.06);
+    overflow:hidden;
+  }
+  .ticket-head{
+    background:linear-gradient(135deg,var(--teal-800),var(--teal-600));
+    color:#eafff5;
+    padding:26px 30px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .ticket-head::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px; width:220px; height:220px;
+    background:radial-gradient(circle, rgba(255,255,255,.08), transparent 70%);
+  }
+  .claim-no{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;opacity:.85;}
+  .name{font-size:38px;font-weight:800;margin:6px 0 4px;letter-spacing:-.01em;}
+  .role{font-size:15px;color:#bfe9d8;font-weight:500;}
+  .status-chip{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.35);
+    padding:6px 14px;border-radius:999px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.07em;
+    margin-top:14px;
+  }
+  .status-chip .check{color:#8df0bf;font-weight:700;}
+
+  /* progress bar */
+  .progress-row{padding:18px 30px 22px;border-bottom:1px solid var(--line);background:var(--paper-dim);}
+  .progress-steps{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:8px;}
+  .progress-steps span.active{color:var(--teal-700);font-weight:700;}
+  .progress-track{height:8px;background:#e4e2d6;border-radius:999px;overflow:hidden;position:relative;}
+  .progress-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--teal-600),var(--green-500));
+    border-radius:999px;
+    transition:width 1.8s cubic-bezier(.3,.8,.3,1);
+  }
+
+  /* contact row */
+  .contact-row{display:flex;flex-wrap:wrap;gap:14px;padding:16px 30px;font-size:13.5px;color:var(--ink-soft);}
+  .contact-row span{display:flex;align-items:center;gap:6px;}
+  .contact-row b{color:var(--ink);font-weight:600;}
+
+  /* ===== policyholder snapshot grid ===== */
+  .snap-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);
+  }
+  .snap-cell{background:var(--white);padding:16px 18px;}
+  .snap-cell .label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;color:var(--teal-600);font-weight:600;margin-bottom:6px;}
+  .snap-cell .val{font-size:14.5px;font-weight:700;color:var(--ink);}
+
+  /* ===== sections ===== */
+  .section{max-width:900px;margin:30px auto 0;padding:0 20px;}
+  .section-title{
+    display:flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;letter-spacing:.12em;
+    color:var(--teal-800);
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .section-title::before{content:"";width:8px;height:8px;background:var(--green-500);border-radius:2px;transform:rotate(45deg);}
+  .section-title .tag{
+    margin-left:auto;font-weight:500;letter-spacing:.04em;font-size:10.5px;color:var(--ink-soft);
+    background:var(--green-100);padding:3px 9px;border-radius:5px;border:1px solid #cdeedc;
+  }
+
+  .card{
+    background:var(--white);border:1px solid var(--line);border-radius:12px;
+    padding:20px 22px;margin-bottom:12px;
+    box-shadow:0 1px 2px rgba(20,32,30,.03);
+  }
+  .card p{font-size:14.5px;line-height:1.65;color:#2c3836;margin:0;}
+
+  /* claims history (experience) */
+  .claim-item{
+    background:var(--white);border:1px solid var(--line);border-radius:12px;
+    margin-bottom:12px;overflow:hidden;
+  }
+  .claim-top{
+    display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;
+    padding:16px 20px;cursor:pointer;
+    transition:background .15s;
+  }
+  .claim-top:hover{background:var(--paper-dim);}
+  .claim-left .claim-id{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal-600);letter-spacing:.05em;margin-bottom:4px;}
+  .claim-left .claim-title{font-size:16px;font-weight:700;color:var(--ink);}
+  .claim-left .claim-sub{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+  .claim-right{display:flex;align-items:center;gap:10px;}
+  .badge{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;font-weight:700;
+    padding:5px 11px;border-radius:999px;white-space:nowrap;
+  }
+  .badge.approved{background:var(--green-100);color:#187a47;border:1px solid #bde6cc;}
+  .chev{transition:transform .25s;color:var(--ink-soft);font-size:13px;}
+  .claim-item.open .chev{transform:rotate(90deg);}
+  .claim-body{
+    max-height:0;overflow:hidden;
+    transition:max-height .35s ease;
+    padding:0 20px;
+    border-top:1px solid transparent;
+  }
+  .claim-item.open .claim-body{border-top:1px solid var(--line);}
+  .claim-body-inner{padding:14px 0 18px;}
+  .claim-body-inner ul{margin:0;padding-left:18px;}
+  .claim-body-inner li{font-size:13.5px;line-height:1.6;color:#2c3836;margin-bottom:7px;}
+
+  /* coverage grid (skills) */
+  .coverage-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  @media (max-width:620px){.coverage-grid{grid-template-columns:1fr;}}
+  .coverage-item{
+    background:var(--white);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;display:flex;align-items:flex-start;gap:12px;
+  }
+  .coverage-item .ok{
+    flex-shrink:0;width:22px;height:22px;border-radius:50%;
+    background:var(--green-100);color:#187a47;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+    border:1px solid #bde6cc;
+  }
+  .coverage-item .ct-title{font-size:13.5px;font-weight:700;color:var(--ink);}
+  .coverage-item .ct-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.4;}
+
+  /* policy documents (education) */
+  .doc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  @media (max-width:620px){.doc-grid{grid-template-columns:1fr;}}
+  .doc-card{
+    background:var(--white);border:1px dashed #b9c5bf;border-radius:10px;
+    padding:16px 18px;position:relative;
+  }
+  .doc-card::before{content:"◈";position:absolute;top:12px;right:14px;color:var(--teal-500);font-size:14px;}
+  .doc-card .doc-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+  .doc-card .doc-sub{font-size:12.5px;color:var(--ink-soft);}
+  .doc-card .doc-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--teal-600);margin-top:8px;letter-spacing:.04em;}
+
+  /* CTA */
+  .cta-wrap{max-width:900px;margin:40px auto 0;padding:0 20px;text-align:center;}
+  .cta-card{
+    background:linear-gradient(135deg,var(--teal-800),var(--teal-700));
+    border-radius:16px;padding:34px 24px;color:#eafff5;
+  }
+  .cta-card h3{margin:0 0 8px;font-size:21px;font-weight:800;}
+  .cta-card p{margin:0 0 18px;font-size:13.5px;color:#bfe9d8;}
+  .cta-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--green-500);color:#07241a;font-weight:700;
+    padding:12px 26px;border-radius:999px;text-decoration:none;
+    font-size:14px;letter-spacing:.02em;
+    transition:transform .15s, box-shadow .15s;
+    box-shadow:0 6px 16px rgba(47,174,106,.35);
+  }
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(47,174,106,.45);}
+  .fineprint{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#7fb3a0;margin-top:14px;letter-spacing:.03em;}
+
+  footer{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:26px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+</style>
+</head>
+<body>
+
+  <div class="statusbar">
+    <span><span class="dot"></span>CLAIM STATUS: ACTIVE &amp; UNDER FAVORABLE REVIEW</span>
+    <span>POLICY TYPE: FULL-COVERAGE CANDIDATE</span>
+  </div>
+
+  <div class="ticket-wrap">
+    <div class="ticket">
+      <div class="ticket-head">
+        <div class="claim-no mono">CLAIM FILE — MG-2026-OR01 · OPENED 08 OCT 2026</div>
+        <div class="name">Martin Gayot</div>
+        <div class="role">Operational Representative — Life &amp; Protection Solutions</div>
+        <div class="status-chip mono"><span class="check">✓</span> PRE-APPROVED FOR INTERVIEW</div>
+      </div>
+
+      <div class="progress-row">
+        <div class="progress-steps mono">
+          <span class="active">SUBMITTED</span>
+          <span class="active">VERIFIED</span>
+          <span class="active">REVIEWED</span>
+          <span class="active">APPROVED</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="contact-row">
+        <span>✉ <b>martinhgayot@outlook.com</b></span>
+        <span>☏ <b>+34 637 664 974</b></span>
+        <span>☏ <b>+1 817-718-1588</b></span>
+      </div>
+
+      <div class="snap-grid">
+        <div class="snap-cell">
+          <div class="label">LANGUAGES</div>
+          <div class="val">FR native · EN native-level · ES professional</div>
+        </div>
+        <div class="snap-cell">
+          <div class="label">COVERAGE EXPERIENCE</div>
+          <div class="val">Life · Disability · Long-Term Care</div>
+        </div>
+        <div class="snap-cell">
+          <div class="label">LOCATION</div>
+          <div class="val">Madrid, Spain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section">
+    <div class="section-title">ADJUSTER'S SUMMARY <span class="tag">LOW RISK</span></div>
+    <div class="card">
+      <p>Policyholder has handled the full insurance lifecycle firsthand — selling life, disability, and long-term-care policies, managing them once in force, and staying on the file when a claim actually came in. Independently verified history of precise, deadline-driven data work (Deloitte) and multilingual client handling across the US, Belgium, and Spain. No red flags found. Recommend proceeding to interview without further documentation.</p>
+    </div>
+  </div>
+
+  <!-- CLAIMS HISTORY (experience) -->
+  <div class="section">
+    <div class="section-title">CLAIMS HISTORY <span class="tag">4 FILES · ALL RESOLVED</span></div>
+
+    <div class="claim-item" data-claim>
+      <div class="claim-top" onclick="toggleClaim(this)">
+        <div class="claim-left">
+          <div class="claim-id mono">FILE #MG-01 · RETHINK WEALTH / GUARDIAN</div>
+          <div class="claim-title">Financial Advisor</div>
+          <div class="claim-sub">Fort Worth, TX — In-Person · Oct 2024 – Mar 2026</div>
+        </div>
+        <div class="claim-right">
+          <span class="badge approved">RESOLVED · APPROVED</span>
+          <span class="chev">▸</span>
+        </div>
+      </div>
+      <div class="claim-body">
+        <div class="claim-body-inner">
+          <ul>
+            <li>Sold and managed life, disability, and long-term-care insurance policies, acting as the first point of contact for clients and policyholders throughout the relationship.</li>
+            <li>Walked clients through active claims — coordinating with the carrier, clarifying policy conditions, and keeping all parties (client, HR department, internal team) on the same page.</li>
+            <li>Built relationships with dozens of insurance agencies across the US; ranked top 20% of 55 agents nationally in year one.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="claim-item" data-claim>
+      <div class="claim-top" onclick="toggleClaim(this)">
+        <div class="claim-left">
+          <div class="claim-id mono">FILE #MG-02 · VACASA</div>
+          <div class="claim-title">Central America Market Lead — Business Development</div>
+          <div class="claim-sub">Belize, Remote · Jan 2022 – Oct 2024</div>
+        </div>
+        <div class="claim-right">
+          <span class="badge approved">RESOLVED · APPROVED</span>
+          <span class="chev">▸</span>
+        </div>
+      </div>
+      <div class="claim-body">
+        <div class="claim-body-inner">
+          <ul>
+            <li>Managed a 236-account portfolio across 7 countries, maintaining accurate reporting and acting as the point of contact for client questions in multiple languages.</li>
+            <li>Delivered 18%+ YoY revenue growth; named LATAM Growth Leader.</li>
+            <li>Handled data and documentation accurately across a large, multilingual client base — the same discipline a claims file demands.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="claim-item" data-claim>
+      <div class="claim-top" onclick="toggleClaim(this)">
+        <div class="claim-left">
+          <div class="claim-id mono">FILE #MG-03 · DELOITTE LUXEMBOURG</div>
+          <div class="claim-title">Financial Auditor — PE &amp; AIF Team</div>
+          <div class="claim-sub">Luxembourg · Feb 2019 – May 2021</div>
+        </div>
+        <div class="claim-right">
+          <span class="badge approved">RESOLVED · APPROVED</span>
+          <span class="chev">▸</span>
+        </div>
+      </div>
+      <div class="claim-body">
+        <div class="claim-body-inner">
+          <ul>
+            <li>Assessed financial data against strict policy and regulatory conditions, reporting findings accurately under tight deadlines.</li>
+            <li>Communicated with clients and third parties in multiple languages to resolve discrepancies and gather required documentation — basically pre-training for a claims desk.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="claim-item" data-claim>
+      <div class="claim-top" onclick="toggleClaim(this)">
+        <div class="claim-left">
+          <div class="claim-id mono">FILE #MG-04 · CANOPY CONSULTING</div>
+          <div class="claim-title">Founder</div>
+          <div class="claim-sub">Belize, Remote · Apr 2022 – Dec 2025</div>
+        </div>
+        <div class="claim-right">
+          <span class="badge approved">RESOLVED · APPROVED</span>
+          <span class="chev">▸</span>
+        </div>
+      </div>
+      <div class="claim-body">
+        <div class="claim-body-inner">
+          <ul>
+            <li>Managed client relationships end-to-end, handling sensitive data and reporting responsibly across 21+ engagements.</li>
+            <li>Comfortable working independently with minimal oversight — no escalation required.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COVERAGE SUMMARY (skills) -->
+  <div class="section">
+    <div class="section-title">COVERAGE SUMMARY <span class="tag">FULL COVERAGE</span></div>
+    <div class="coverage-grid">
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Life &amp; Disability Policy Expertise</div><div class="ct-sub">Selling, managing, and servicing real policies — not just reading about them.</div></div>
+      </div>
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Claims Handling</div><div class="ct-sub">First point of contact between claimants, carriers, and HR departments.</div></div>
+      </div>
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Accurate, Deadline-Driven Reporting</div><div class="ct-sub">Two years of regulated financial reporting at Deloitte.</div></div>
+      </div>
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Multilingual Client Communication</div><div class="ct-sub">Native French, native-level English, professional Spanish.</div></div>
+      </div>
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Office Package Proficiency</div><div class="ct-sub">Word, Excel, Outlook — and anything else needed, fast.</div></div>
+      </div>
+      <div class="coverage-item">
+        <div class="ok">✓</div>
+        <div><div class="ct-title">Independent &amp; Team Work</div><div class="ct-sub">Comfortable owning a file solo or coordinating across a team.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POLICY DOCUMENTS (education) -->
+  <div class="section">
+    <div class="section-title">POLICY DOCUMENTS ON FILE <span class="tag">VERIFIED</span></div>
+    <div class="doc-grid">
+      <div class="doc-card">
+        <div class="doc-title">MSc International Business</div>
+        <div class="doc-sub">Solvay Brussels School of Economics &amp; Management, Belgium — with distinctions</div>
+        <div class="doc-date mono">ISSUED 2019 – 2021</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-title">BSc Business Communications</div>
+        <div class="doc-sub">Emlyon Business School, France — honors, Top 15%</div>
+        <div class="doc-date mono">ISSUED 2016 – 2019</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <div class="cta-card">
+      <h3>CLAIM READY FOR FINAL APPROVAL</h3>
+      <p>All documentation verified. No exclusions apply. Recommend hiring before this file closes.</p>
+      <a class="cta-btn" href="mailto:martinhgayot@outlook.com?subject=Operational Representative — Let's talk">✓ APPROVE THIS CLAIM</a>
+      <div class="fineprint">* No deductible, no waiting period, no pre-existing conditions that would get in the way of doing great work.</div>
+    </div>
+  </div>
+
+  <footer>MARTIN GAYOT · CLAIM FILE MG-2026-OR01 · PROFESSIONAL REFERENCES AVAILABLE UPON REQUEST</footer>
+
+<script>
+  function toggleClaim(topEl){
+    const item = topEl.parentElement;
+    const body = item.querySelector('.claim-body');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.claim-item.open').forEach(el=>{
+      if(el!==item){ el.classList.remove('open'); el.querySelector('.claim-body').style.maxHeight = null; }
+    });
+    if(isOpen){
+      item.classList.remove('open');
+      body.style.maxHeight = null;
+    } else {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{ document.getElementById('progressFill').style.width = '100%'; }, 300);
+    // auto-open first claim for a little delight
+    setTimeout(()=>{
+      const first = document.querySelector('[data-claim]');
+      if(first) toggleClaim(first.querySelector('.claim-top'));
+    }, 1400);
+  });
+</script>
+</body>
+</html>
